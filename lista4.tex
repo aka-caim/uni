@@ -1,0 +1,120 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{caption}
+\captionsetup[algorithm]{labelformat=empty} % remove "Algorithm n"
+
+% template do Marcel
+\newcommand{\Lista}{4}
+\newcommand{\Nome}{Caio Morais Sales}
+\newcommand{\NUSP}{12557268}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\Nome}
+\fancyhead[R]{NUSP \NUSP}
+\fancyfoot[L]{Lista \Lista}
+\fancyfoot[C]{MAC0338}
+\fancyfoot[R]{Página \thepage\ de \pageref{LastPage}}
+% template do Marcel
+
+\setlength{\parindent}{0pt}	% sem indentação
+\setlength{\parskip}{1em} % espaço entre parágrafos
+
+\begin{document}
+
+\section*{Exercício 2}
+
+Dado um vetor \texttt{A[1..n]} contendo $n$ inteiros distintos no intervalo $[0, n^2 - 1]$, cada número pode ser representado em base $n$ usando dois dígitos:
+\[ x = d_1 \cdot n + d_0, \quad \text{com } 0 \leq d_0, d_1 < n. \]
+A conversão de um número em uma base arbitrária para a base $n$ é feita em tempo constante, e como temos $n$ inteiros, a conversão de todos os números é $\Theta(n)$. A partir de agora, vamos supor que \texttt{A} é um vetor de $n$ pares, que representam, respectivamente, o primeiro e o segundo dígito do inteiro, na base $n$.
+
+Assim, podemos ordenar primeiro pelos dígitos menos significativos ($d_0$), e em seguida pelos mais significativos ($d_1$), utilizando \texttt{COUNTING-SORT-MOD}, uma versão levemente modificada do \texttt{COUNTING-SORT} visto em aula que, como vimos, é estável. Essa versão apenas modifica o valor que é acessado, que deixa de ser \texttt{A[j]} e passa a ser \texttt{A[j][dig]}, não alterando o custo de tempo do algoritmo original.
+
+Esse processo é exatamente um \texttt{RADIX-SORT}, visto em aula, com apenas dois dígitos em base $n$.
+
+\begin{algorithm}
+	\caption{RADIX-SORT($A$, $n$)}
+	\begin{algorithmic}[1]
+		\STATE $A \gets \text{COUNTING-SORT-MOD}(A, n, \text{dig}=0)$
+		\STATE $A \gets \text{COUNTING-SORT-MOD}(A, n, \text{dig}=1)$
+		\RETURN $A$
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[hbt!]
+	\caption{COUNTING-SORT-MOD($A, n, \text{dig}$)}
+	\begin{algorithmic}[1]
+		\STATE \textbf{para} $i \gets 0$ \textbf{até} $k$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[i] \gets 0$
+		\STATE \textbf{para} $j \gets 1$ \textbf{até} $n$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[A[j][\text{dig}]] \gets C[A[j][\text{dig}]] + 1$
+		\STATE \textbf{para} $i \gets 1$ \textbf{até} $k$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[i] \gets C[i] + C[i-1]$
+		\STATE \textbf{para} $j \gets n$ \textbf{decrescendo até} $1$ \textbf{faça}
+		\STATE \hspace{0.5cm} $B[C[A[j][\text{dig}]]] \gets A[j]$
+		\STATE \hspace{0.5cm} $C[A[j][\text{dig}]] \gets C[A[j][\text{dig}]] - 1$
+		\STATE \textbf{devolva} $B$
+	\end{algorithmic}
+\end{algorithm}
+
+% \begin{algorithm}[h!] \caption{COUNTING-SORT($A$, $n$, digit)} \begin{algorithmic}[1] \FOR{$j = 1$ \TO $n$} \STATE $d \gets$ $A[j][digit]$ \STATE $C[d] \gets C[d] + 1$ \ENDFOR \FOR{$i = 1$ \TO $n-1$} \STATE $C[i] \gets C[i] + C[i-1]$ \ENDFOR \FOR{$j = n$ \TO $1$ \textbf{step} $-1$} \STATE $d \gets$ $A[j][digit]$ \STATE $B[C[d]] \gets A[j]$ \STATE $C[d] \gets C[d] - 1$ \ENDFOR \RETURN $B$ \end{algorithmic} \end{algorithm}
+
+Agora, vamos argumentar a corretude do algoritmo. Seja $x = (d_1^x, d_0^x)$ e $y = (d_1^y, d_0^y)$ a representação em base $n$ de dois elementos $x$ e $y$.  Após ordenar por $d_0$, os elementos ficam agrupados de acordo com seu dígito menos significativo. Após ordenar por $d_1$, o algoritmo garante que se $d_1^x < d_1^y$ então $x$ aparece antes de $y$. Como o algoritmo é estável, se $d_1^x = d_1^y$, então a ordem relativa por $d_0$ é preservada.
+
+Logo, ao final, o vetor está ordenado de acordo com $(d_1, d_0)$, que é precisamente a representação dos inteiros em ordem crescente.
+
+O argumento da linearidade de \texttt{COUNTING-SORT} está na questão 7, incluída no presente arquivo, logo abaixo, e tal argumento vale para nossa versão modificada, como justificado acima.
+
+A complexidade do \texttt{COUNTING-SORT-MOD}, $C(n)$, para vetor de tamanho $n$ com base $n$ é, portanto, $\Theta(n)$. Chamando o custo do algoritmo \texttt{RADIX-SORT} de $T(n)$, temos $T(n) = 2 \cdot C(n)$, e assim, \texttt{RADIX-SORT} é linear.
+
+\newpage
+
+\section*{Exercício 7}
+
+Queremos provar a estabilidade do algoritmo de ordenação abaixo. Ora, provar a estabilidade é o mesmo que mostrar que, dados dois elementos quaisquer, se eles possuem a mesma chave, então eles aparecem, após a ordenação, na mesma ordem relativa em que estavam originalmente.
+
+\begin{algorithm}
+	\caption{COUNTING-SORT($A, n$)}
+	\begin{algorithmic}[1]
+		\STATE \textbf{para} $i \gets 1$ \textbf{até} $k$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[i] \gets 0$
+		\STATE \textbf{para} $j \gets 1$ \textbf{até} $n$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[A[j]] \gets C[A[j]] + 1$
+		\STATE \textbf{para} $i \gets 2$ \textbf{até} $k$ \textbf{faça}
+		\STATE \hspace{0.5cm} $C[i] \gets C[i] + C[i-1]$
+		\STATE \textbf{para} $j \gets n$ \textbf{decrescendo até} $1$ \textbf{faça}
+		\STATE \hspace{0.5cm} $B[C[A[j]]] \gets A[j]$
+		\STATE \hspace{0.5cm} $C[A[j]] \gets C[A[j]] - 1$
+		\STATE \textbf{devolva} $B$
+	\end{algorithmic}
+\end{algorithm}
+
+Então, tomemos dois elementos arbitrários \texttt{A[i]} e \texttt{A[j]} do array de entrada, com $i < j$, e suponha que ambos tenham a mesma chave $k$.
+
+Após as linhas 1-6, o vetor auxiliar $C$ armazena, em \texttt{C[k]},  a posição final da última ocorrência de $k$ no array de saída. Na linha 7, o algoritmo percorre \texttt{A} da direita para a esquerda.
+
+Quando o elemento \texttt{A[j]} (mais à direita) é processado, a linha 8 o coloca na posição \texttt{C[k]}, a posição mais à direita disponível para a chave $k$. Em seguida, a linha 9 decrementa \texttt{C[k]} em 1.
+
+Posteriormente, quando o elemento \texttt{A[i]} é processado, ele utiliza o valor atualizado de \texttt{C[k]}, que agora aponta para uma posição mais à esquerda. Assim, \texttt{A[i]} é colocado antes de \texttt{A[j]} no array \texttt{B}.
+
+Assim, concluímos: se $i < j$, então \texttt{A[i]} aparece antes de \texttt{A[j]} na saída, o que demonstra a estabilidade do algoritmo.
+
+%\section*{Exercício 8}
+
+%Se a linha 7 do algoritmo \textsc{Counting-Sort} for modificada de o algoritmo continua produzindo uma ordenação correta de \texttt{A[1..n]}, mas deixa de ser estável.
+
+%Após a fase de contagem, o vetor $C[0 \dots k]$ é tal que $C[v]$ indica o índice da \emph{última posição} em que um elemento de valor $v$ deve ser colocado no vetor de saída $B$.  
+	
+%Na fase de distribuição, para cada $j = 1 \dots n$, o algoritmo coloca \texttt{A[j]} em \texttt{B[C[A[j]]]} e então decrementa \texttt{C[A[j]]}. Note que, independentemente da ordem em que percorremos \texttt{A}, a cada chamada de inserção para uma chave \texttt{v}, o valor de \texttt{C[v]} é reduzido em 1, garantindo que as posições \texttt{C[v], C[v]-1, ..., 1} sejam todas eventualmente preenchidas. Portanto, todos os elementos de chave \texttt{v} terminam no intervalo correto em \texttt{B}. Como isso é válido para todo \texttt{v}, o vetor \texttt{B} é uma permutação ordenada de \texttt{A}. Logo, a ordenação é correta.
+
+%Se o laço percorre \texttt{A} de $n$ até $1$, então o último elemento de chave \texttt{v} encontrado em \texttt{A} ocupará a posição mais à direita disponível no bloco correspondente de \texttt{B}. Portanto, os elementos iguais preservam a ordem relativa em que aparecem em \texttt{A}, e o algoritmo é estável. Mas, no caso da linha alterada, percorremos \texttt{A} de $1$ até $n$, então o primeiro elemento de chave \texttt{v} ocupará a posição mais à direita no bloco de \texttt{B}, e os subsequentes serão colocados cada vez mais à esquerda. Assim, a ordem relativa dos elementos de mesma chave é invertida.
+
+\end{document}

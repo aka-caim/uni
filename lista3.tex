@@ -1,0 +1,206 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\usepackage{listings} % usado para codigo
+
+\lstset{
+	basicstyle=\ttfamily\small,  % fonte monoespaçada
+	numbers=left,                	  % numerar linhas
+	numberstyle=\tiny,
+	stepnumber=1,
+	numbersep=5pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	frame=single,                	% caixa em volta
+	tabsize=2,
+	captionpos=b,
+	breaklines=true,
+}
+
+% template do Marcel
+\newcommand{\Lista}{3}
+\newcommand{\Nome}{Caio Morais Sales}
+\newcommand{\NUSP}{12557268}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\Nome}
+\fancyhead[R]{NUSP \NUSP}
+\fancyfoot[L]{Lista \Lista}
+\fancyfoot[C]{MAC0338}
+\fancyfoot[R]{Página \thepage\ de \pageref{LastPage}}
+% template do Marcel
+
+\setlength{\parindent}{0pt}	% sem indentação
+\setlength{\parskip}{1em} % espaço entre parágrafos
+
+\begin{document}
+
+\section*{Exercício 1}
+
+\textbf{Linha 6:} Essa linha é \verb|senão se v[i] < menor|. Tal comparação é executada somente quando \verb|v[i]| não é o novo máximo entre os $i$ primeiros elementos. A chance disso ocorrer é de $1 - \frac{1}{i}$.
+
+Logo, o número esperado de comparações na linha 6 é
+\[
+\sum_{i=2}^n \left(1 - \frac{1}{i}\right) 
+= (n-1) - \left(\sum_{i=1}^{n} \frac{1}{i} - 1\right) 
+= n - \sum_{i=1}^{n} \frac{1}{i}.
+\]
+Tal esperança pertence a $O(n)$, uma vez que $\sum_{i=1}^{n} \frac{1}{i} \in O(\lg n)$, conforme vimos em aula e no apêndice do CLRS.
+
+\textbf{Linha 7:} A atribuição \texttt{menor $\gets$ v[i]} ocorre quando $v[i]$ é o novo mínimo entre os primeiros $i$ elementos, o que acontece com probabilidade $\tfrac{1}{i}$.  
+Portanto, o número esperado de atribuições é
+\[ \sum_{i=2}^n \frac{1}{i}. \]
+De forma análoga, concluímos que tal esperança é $O(\lg n)$.
+
+\newpage
+
+\section*{Exercício 5}
+
+A ideia para esse algoritmo é utilizar uma versão levemente modificada de \verb|PARTICIONE|, vista na aula 4. Adicionamos mais um parâmetro, que é o pivô que vamos utilizar (no caso, será a mediana, obtida da função caixa-preta linear).
+
+\begin{lstlisting}
+PARTICIONE(A, p, r, x)
+	para j <- p ate r faca
+		se A[j] == x
+			entao A[j] <-> A[r]
+			break
+	
+	i <- p
+	para j <- p ate r-1 faca
+		se A[j] <= x
+			entao A[i] <-> A[j]
+				i <- i + 1
+	A[i] <-> A[r]
+	devolva i
+\end{lstlisting}
+
+\begin{lstlisting}
+SELECT(A, p, r, k)
+	se p = r entao
+		devolva A[p]
+	
+	m <- MEDIANA(A[p..r])
+	q <- PARTICIONE(A, p, r, m)
+	pos <- q - p + 1
+	
+	se k = pos
+		entao devolva A[q]
+	senao se k < pos
+		entao devolva SELECT(A, p, q-1, k)
+	senao devolva SELECT(A, q+1, r, k - pos)
+\end{lstlisting}
+
+O algoritmo de particionamento é praticamente o mesmo verificado na aula 4, com as mesmas invariantes. Foi adicionada apenas um pedaço de código simples, que encontra o índice do valor do pivô, percorrendo o vetor (linear).
+
+O algoritmo de seleção, após o particionamento em torno de $m$, calcula \verb|pos|, posição relativa de $m$ no vetor. Dado esse valor, se ele corresponde a $k$, significa que encontramos o $k$-ésimo menor valor. Do contrário, comparamos $k$ com \verb|pos| e fazemos uma chamada recursiva na metade adequada do vetor.
+
+Então, argumentemos por indução sobre $n$ que o algoritmo sempre devolve o $k$-ésimo menor de $A[p..r]$:
+
+% INDUCAO SOBRE N
+
+Seja $T(n)$ o tempo de execução de \texttt{SELECT} em um vetor de tamanho $n$. Cada chamada executa o cálculo da mediana em $\Theta(n)$, pois, do enunciado, sabemos ser linear. O particionamento, conforme já discutido, também é linear. E por último, temos uma chamada recursiva em um subvetor de tamanho exatamente $n/2$ (já que, por hipótese, o tamanho do vetor é uma potência de 2).
+
+Logo,
+\[
+T(n) = T\!\left(\tfrac{n}{2}\right) + \Theta(n), 
+\quad T(1) = 1,
+\]
+e na nossa análise, vamos substituir $\Theta(n)$ por uma função da classe: $n$. Seja, então, $n = 2^k$. Daí temos:
+\begin{align*}
+	T(n) &= T(n/2) + n \\
+	&= T(n/4) + n/2 + n \\
+	&= T(n/8) + n/4 + n/2 + n \\
+	&\;\;\vdots \\
+	&= T(1) + n/2^{k-1} + n/2^{k-2} + \dots + n/2 + n
+\end{align*}
+
+Como $T(1) = 1$ e $n / 2^k = 1$, podemos escrever a soma como:
+\[
+T(n) = 1 + \frac{n}{2^k} + \frac{n}{2^{k-1}} + \dots + \frac{n}{2} + n
+= 1 + n \left( \frac{1}{2^k} + \frac{1}{2^{k-1}} + \dots + \frac{1}{2} + 1 \right)
+\]
+A soma geométrica $\sum_{i=0}^{k} \frac{1}{2^i}$ é:
+\[
+\sum_{i=0}^{k} \frac{1}{2^i} = \frac{1 - (1/2)^{k+1}}{1 - 1/2} = 2 \left( 1 - \frac{1}{2^{k+1}} \right)
+\]
+Portanto:
+\[
+T(n) = n \cdot 2 \left(1 - \frac{1}{2^{k+1}}\right) + 1
+= 2 n \left(1 - \frac{1}{2n}\right) + 1
+\]
+E concluímos que o algoritmo é linear:
+\[
+T(n) = 2n.
+\]1
+\newpage
+
+\section*{[Bônus] Exercício 9}
+
+A ideia do algoritmo recursivo que vamos apresentar a seguir é comparar as medianas dos dois vetores, e proceder como segue:
+- Se $m_X = m_Y$, encontramos a mediana global, que é $m_X$. 
+
+- Se $m_X < m_Y$, a mediana global não pode estar na metade inferior de $X$ nem na metade superior de $Y$.  
+
+Portanto, reduzimos o problema para os subvetores $X[n/2..n]$ e $Y[1..n/2]$.  
+- Se $m_X > m_Y$, a recursão é feita simetricamente em $X[1..n/2]$ e $Y[n/2..n]$.  
+
+A cada recursão, o tamanho dos vetores é reduzido pela metade, até que reste apenas um elemento em cada vetor, caso base.
+
+Segue o pseudo-código:
+
+\begin{lstlisting}
+MEDVECS(X[1..n], Y[1..n])
+  se n = 1
+  	entao devolva min(X[1], Y[1])
+
+  mX <- X[n/2]
+  mY <- Y[n/2]
+
+  se mX = mY
+  	entao devolva mX
+  senao, se mX < mY
+  	entao devolva MEDVECS(X[n/2..n], Y[1..n/2])
+  	senao devolva MEDVECS(X[1..n/2], Y[n/2..n])
+\end{lstlisting}
+
+Ao comparar $m_X$ e $m_Y$, conseguimos descartar metade dos elementos de cada vetor que não podem conter a mediana global.  Quando $m_X = m_Y$, a mediana global é encontrada imediatamente.  A recursão sempre é feita sobre os elementos que podem conter a mediana, mantendo o invariante de que a mediana global está no intervalo atual.
+
+Agora, vamos analisar o consumo de tempo do algoritmo: 
+Seja $T(n)$ o tempo de execução do algoritmo em vetores de tamanho $n$. Cada chamada realiza o cálculo das medianas de $X$ e $Y$ em $O(1)$, pois os vetores estão ordenados, e uma chamada recursiva em vetores de tamanho $n/2$.
+
+Portanto, a recorrência do tempo é:
+\[
+T(n) = T\left(\frac{n}{2}\right) + O(1), \quad T(1) = 1.
+\]
+E vamos substituir $O(1)$ por uma função da classe: $1$. Agora, para encontrar uma forma fechada, vamos tomar $n = 2^k$ e desenvolver a recorrência:
+\begin{align*}
+	T(n) &= T(n/2) + 1 \\
+	&= T(n/4) + 1 + 1 \\
+	&= T(n/8) + 1 + 1 + 1 \\
+	&\;\;\vdots \\
+	&= T(1) + 1 + 1 + \dots + 1 \quad (\text{$\lg_2 n$ termos})
+\end{align*}
+Logo, concluímos:
+\[ T(n) = 1 + \lg_2 n = O(\lg n). \]
+Agora, vamos provar por indução sobre $k$ que
+\[ T(n) = T\!\left(\tfrac{n}{2}\right) + 1, \qquad T(1) = 1 \]
+possui solução
+\[ T(n) = 1 + \log_2 n, \]
+quando $n = 2^k$. Para $k=0$, temos $n=2^0=1$. Por definição, $T(1)=1$, e como $\log_2 1 = 0$, segue que
+\[ T(1) = 1 = 1 + \log_2 1. \]
+Agora, suponha que, para algum $k \geq 0$, valha
+\[ T(2^k) = 1 + \log_2 (2^k) = 1 + k. \] 
+Vamos mostrar que essa fórmula vale também para $n = 2^{k+1}$ Da recorrência, temos:
+\[ T(2^{k+1}) = T\!\left(\frac{2^{k+1}}{2}\right) + 1 = T(2^k) + 1. \]
+Da hipótese de indução, temos
+\[ T(2^{k+1}) = (1+k) + 1 = 1 + (k+1), \]
+donde concluímos que
+\[ T(2^{k+1}) = 1 + \log_2 (2^{k+1}). \]
+
+\end{document}

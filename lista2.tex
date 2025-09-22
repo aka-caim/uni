@@ -1,0 +1,293 @@
+\documentclass[a4paper]{article}
+
+% language packages
+\usepackage[T1]{fontenc} % 8-bit font encoding (for correct diacritic display)
+\usepackage[utf8]{inputenc} % enables diacritics in source code
+\usepackage[brazil]{babel} % enables brazilian portuguese language standards
+
+% other packages
+\usepackage{amsmath,amssymb,amsfonts,amsthm} % math packages
+\usepackage{graphicx,xcolor} % for images and colors
+\usepackage{hyperref} % hyperlink in references
+\usepackage{fancyhdr} % for personalized headers
+\usepackage{bm} % bold in math mode
+\usepackage{algorithm, algpseudocode} % for algorithms
+\floatname{algorithm}{} % removes "Algorithm 1"
+
+% template do Marcel para mac0338
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyhead[L]{\Nome}
+% \fancyhead[R]{NUSP \NUSP}
+% \fancyfoot[L]{Lista \Lista}
+% \fancyfoot[C]{MAC0338}
+% \fancyfoot[R]{Página \thepage\ de \pageref{LastPage}}
+
+\setlength{\parindent}{0pt}	% no indentation
+\setlength{\parskip}{1em} % space b/w paragraphs
+
+\begin{document}
+
+\section*{Exercício 1}
+
+\textbf{(a). $\bm{T(n) := 2T(n/2) + Cn^2, \: \forall n \ge 2, \: S:= \{ 2^k : k \in \mathbb N \} }$}
+
+Vamos desenvolver a expressão dada, buscando uma fórmula não recursiva equivalente a ela.
+\begin{align*}
+    T(n) & = 2 \, \color{red} T(n/2) \color{black} + Cn^2 \\
+    & = 2 \cdot \color{red} \Big( 2 \, T(n/4) + C(n/2)^2 \Big) \color{black} + Cn^2 \\
+    & = 4 \, \color{red} T(n/4) \color{black} + 2C(n/2)^2 + Cn^2 \\
+    & = 4 \, \cdot \color{red} \Big( 2 \, T(n/8) + C(n/4)^2 \Big) \color{black} + 2C(n/2)^2 + Cn^2 \\
+    & = 8 \, T(n/8) + 4C(n/4)^2 + 2C(n/2)^2 + Cn^2 \\
+    & \: \; \vdots \\
+    & = 2^k \, T(n/2^k) + 2^{k-1}C(n/2^{k-1})^2 + \dots + 2C(n/2)^2 + Cn^2 \\
+    & = 2^k \cdot 1 + Cn^2 \cdot \Big( \frac 1{2^{k-1}} + \frac 1{2^{k-2}} + \dots + \frac 12 + 1 \Big) \\
+    & = 2^k + Cn^2 \cdot \Big( 2 \cdot (1-\frac 1{2^k}) \Big) \qquad \text{[soma geométrica]} \\
+    & = n + 2Cn^2 \cdot (1-\frac 1n). \\
+    & = 2Cn^2 - 2Cn + n.
+\end{align*}
+Agora, precisamos mostrar que a fórmula que encontramos é correta. Fazemos isso mostrando, por indução sobre $k$, que ela vale para todos os valores do conjunto $S$.
+
+Para $k=1$ (ou seja, $n=2$), temos $T(1) = 2T(2/2) + 4C = 4C + 2$. De fato, nossa fórmula nos dá $2C \cdot 4 - 2C \cdot 2 + 2 = 8C -4 +2 = 4C + 2$.
+
+Agora, vamos supor que $T(2^k) = 2C \cdot (2^k)^2 - 2C \cdot 2^k + 2^k$.
+
+Para $T(2^{k+1})$, vale: $T(2^{k+1})=2T(2^k)+C(2^{k+1})^2$. Utilizando nossa hipótese da indução, temos:
+\begin{align*}
+    T(2^{k+1}) & =2 \Big( 2C \cdot (2^k)^2 - 2C \cdot 2^k + 2^k \Big) + C(2^{k+1})^2 \\
+    & = C \cdot (2^{k+1})^2 - 2C \cdot 2^{k+1} + 2^{k+1} + C(2^{k+1})^2 \\
+    & = 2C \cdot (2^{k+1})^2 - 2C \cdot 2^{k+1} + 2^{k+1},
+\end{align*}
+como queríamos demonstrar.
+
+\newpage
+
+\textbf{(b). $\bm{T(n) := 8T(n/2) + Cn^2, \: \forall n \ge 2, \: S:= \{ 2^k : k \in \mathbb N \}}$}
+
+Vamos desenvolver a expressão dada, buscando uma fórmula não recursiva equivalente a ela.
+\begin{align*}
+    T(n) & = 8 \, \color{red} T(n/2) \color{black} + Cn^2 \\
+    & = 8 \cdot \color{red} \Big( 8 \, T(n/4) + C(n/2)^2 \Big) \color{black} + Cn^2 \\
+    & = 64 \, \color{red} T(n/4) \color{black} + 8C(n/2)^2 + Cn^2 \\
+    & = 64 \cdot \color{red} \Big( 8 \, T(n/8) + C(n/4)^2 \Big) \color{black} + 8C(n/2)^2 + Cn^2 \\
+    & = 512 \, T(n/8) + 64C(n/4)^2 + 8C(n/2)^2 + Cn^2 \\
+    & \: \; \vdots \\
+    & = 8^k \, T(n/2^k) + 8^{k-1}C(n/2^{k-1})^2 + \dots + 8C(n/2)^2 + Cn^2.
+\end{align*}
+
+Substituindo $T(1) = 1$ e desenvolvendo a soma geométrica, temos:
+\begin{align*}
+    T(n) & = 8^k \cdot 1 + Cn^2 \cdot \Big( \frac{8^{k-1}}{2^{2(k-1)}} + \dots + \frac{8}{2^2} + 1 \Big) \\
+    & = 8^k + Cn^2 \cdot \sum_{i=0}^{k-1} 2^i \\
+    & = 8^k + Cn^2 \cdot (2^k - 1) \\
+    & = n^3 + Cn^2(n-1) \\
+    & = (C+1)n^3 - Cn^2.
+\end{align*}
+
+Agora, vamos mostrar que a fórmula é correta por indução sobre $k$, $\forall k \in S$.
+
+Para $k=1$ (ou seja, $n=2$) temos
+\[ T(2) = 8T(1) + C \cdot 2^2 = 8 \cdot 1 + 4C = 8 + 4C. \]
+Tal valor também é devolvido por nossa fórmula:
+\[ T(2) = (C+1) \cdot 2^3 - C \cdot 2^2 = 8 + 4C. \]
+Agora, consideremos a hipótese $T(2^k) = (C+1)2^{3k} - C2^{2k}$. Nesse caso, para $T(2^{k+1})$, podemos desenvolver a fórmula recursiva da seguinte maneira:
+\begin{align*}
+T(2^{k+1}) &= 8T(2^k) + C(2^{k+1})^2 \\
+&= 8\big((C+1)2^{3k} - C2^{2k}\big) + C \cdot 2^{2(k+1)} \\
+&= (C+1) 2^{3(k+1)} - C 2^{2(k+1)},
+\end{align*}
+e assim concluir nossa prova indutiva.
+
+\newpage
+
+\textbf{(c). $\bm{T(n) := 7T(n/3) + Cn^2, \: \forall n \ge 2, \: S:= \{ 3^k : k \in \mathbb N \}}$}
+
+Vamos desenvolver a expressão dada, buscando uma fórmula não recursiva equivalente a ela.
+\begin{align*}
+    T(n) & = 7 \, \color{red} T(n/3) \color{black} + Cn^2 \\
+    & = 7 \cdot \color{red} \Big( 7 \, T(n/3^2) + C(n/3)^2 \Big) \color{black} + Cn^2 \\
+    & = 7^2 \, \color{red} T(n/3^2) \color{black} + 7C(n/3)^2 + Cn^2 \\
+    & = 7^2 \cdot \color{red} \Big( 7 \, T(n/3^3) + C(n/3^2)^2 \Big) \color{black} + 7C(n/3)^2 + Cn^2 \\
+    & = 7^3 \, T(n/3^3) + 7^2C(n/3^2)^2 + 7C(n/3)^2 + Cn^2 \\
+    & \: \; \vdots \\
+    & = 7^k \, T(n/3^k) + Cn^2 \cdot \sum_{i=0}^{k-1} 7^i \!\left(\frac 1{3^i}\right)^{\!2}.
+\end{align*}
+Substituindo $T(1)=1$ e simplificando a soma, obtemos
+\begin{align*}
+    T(n)
+    &= 7^k + Cn^2 \sum_{i=0}^{k-1} \frac{7^i}{3^{2i}} \\
+    &= 7^k + Cn^2 \sum_{i=0}^{k-1} \left(\frac{7}{9}\right)^i \\
+    &= 7^k + Cn^2 \cdot \frac{1-(7/9)^k}{1-7/9} \\
+    &= 7^k + Cn^2 \cdot \frac{1-(7/9)^k}{2/9} \\
+    &= 7^k + \frac{9C}{2}\,n^2\!\left(1-\left(\frac{7}{9}\right)^k\right).
+\end{align*}
+Agora usamos $n=3^k$, de modo que $(7/9)^k = \dfrac{7^k}{3^{2k}} = \dfrac{7^k}{n^2}$ e escrevemos a forma fechada em termos de \(n\):
+\begin{align*}
+    T(n)
+    &= 7^k + \frac{9C}{2}\,n^2 - \frac{9C}{2}\,7^k \\
+    &= \left(1-\frac{9C}{2}\right)7^k + \frac{9C}{2}\,n^2 \\
+    &= \left(1-\frac{9C}{2}\right)n^{\log_3 7} + \frac{9C}{2}\,n^2.
+\end{align*}
+
+Agora, provamos que a fórmula é correta por indução sobre $k$, no conjunto $S$.
+
+Para $k=1$ (ou seja, $n=3$):
+\[ T(3) = 7T(1) + C\cdot 3^2 = 7\cdot 1 + 9C = 7 + 9C. \]
+Com a fórmula que desenvolvemos, obtemos o mesmo resultado
+\[ T(3) = \left(1-\frac{9C}{2}\right)3^{\log_3 7} + \frac{9C}{2}\cdot 3^2
+= \left(1-\frac{9C}{2}\right)7 + \frac{9C}{2}\cdot 9
+= 7 + 9C. \]
+Agora, suponha que para $k$ valha
+\[ T(3^k) = \left(1-\frac{9C}{2}\right)7^k + \frac{9C}{2}\cdot 3^{2k}. \]
+Para $T(3^{k+1})$, temos
+\begin{align*}
+T(3^{k+1})
+&= 7T(3^k) + C(3^{k+1})^2 \\
+&= 7\left[\left(1-\frac{9C}{2}\right)7^k + \frac{9C}{2}\cdot 3^{2k}\right] + C\cdot 3^{2(k+1)} \\
+&= \left(1-\frac{9C}{2}\right)7^{k+1} + \frac{63C}{2}\cdot 3^{2k} + 9C\cdot 3^{2k} \\
+&= \left(1-\frac{9C}{2}\right)7^{k+1} + \frac{9C}{2}\cdot 3^{2(k+1)},
+\end{align*}
+isto é, exatamente o valor de nossa fórmula para $k+1$, como queríamos mostrar.
+
+\newpage
+
+\textbf{(d). $\bm{T(n) := 2T(n/2) + Cn^3, \: \forall n \ge 2, \: S:= \{ 2^k : k \in \mathbb N \}}$}
+
+Vamos desenvolver a expressão dada, buscando uma fórmula não recursiva equivalente a ela.
+\begin{align*}
+    T(n) & = 2 \, \color{red} T(n/2) \color{black} + Cn^3 \\
+    & = 2 \cdot \color{red} \Big( 2 \, T(n/4) + C(n/2)^3 \Big) \color{black} + Cn^3 \\
+    & = 4 \, \color{red} T(n/4) \color{black} + 2C(n/2)^3 + Cn^3 \\
+    & = 4 \cdot \color{red} \Big( 2 \, T(n/8) + C(n/4)^3 \Big) \color{black} + 2C(n/2)^3 + Cn^3 \\
+    & = 8 \, T(n/8) + 4C(n/4)^3 + 2C(n/2)^3 + Cn^3 \\
+    & \: \; \vdots \\
+    & = 2^k \, T(n/2^k) + \sum_{i=0}^{k-1} 2^i C\left(\frac{n}{2^i}\right)^3.
+\end{align*}
+Substituindo $T(1)=1$ e simplificando a soma:
+\begin{align*}
+    T(n) &= 2^k + C \sum_{i=0}^{k-1} \frac{2^i n^3}{2^{3i}} \\
+    &= 2^k + C n^3 \sum_{i=0}^{k-1} 2^{-2i} \\
+    &= 2^k + C n^3 \cdot \frac{1 - 2^{-2k}}{1 - 2^{-2}} \\
+    &= 2^k + \frac{4C}{3} n^3 \left(1 - \frac{1}{4^k}\right).
+\end{align*}
+Como $n = 2^k$, temos $1/4^k = 1/n^2$, então:
+\begin{align*}
+    T(n) &= n + \frac{4C}{3} n^3 \left(1 - \frac{1}{n^2}\right) \\
+    &= n + \frac{4C}{3} (n^3 - n) \\
+    &= \frac{4C}{3} n^3 + \left(1 - \frac{4C}{3}\right)n.
+\end{align*}
+Agora, provamos que a fórmula é correta por indução sobre $k$, no conjunto $S$.
+
+Para $k=1$ (ou $n=2$), temos
+\[ T(2) = 2T(1) + C \cdot 2^3 = 2 \cdot 1 + 8C = 2 + 8C. \]
+E pela fórmula que desenvolvemos:
+\[
+T(2) = \frac{4C}{3} \cdot 8 + \left(1 - \frac{4C}{3}\right) \cdot 2 = \frac{32C}{3} + 2 - \frac{8C}{3} = 2 + 8C.
+\]
+Agora, suponha que $T(2^k) = \dfrac{4C}{3} 2^{3k} + \left(1 - \dfrac{4C}{3}\right) 2^k$.
+E então, para $T(2^{k+1})$:
+\begin{align*}
+T(2^{k+1}) &= 2T(2^k) + C(2^{k+1})^3 \\
+&= 2\left[\frac{4C}{3} 2^{3k} + \left(1 - \frac{4C}{3}\right) 2^k \right] + C \cdot 2^{3(k+1)} \\
+&= \frac{8C}{3} 2^{3k} + 2 \left(1 - \frac{4C}{3}\right) 2^k + 8C 2^{3k} \\
+&= \frac{32C}{3} 2^{3k} + \left(1 - \frac{4C}{3}\right) 2^{k+1} \\
+&= \frac{4C}{3} 2^{3(k+1)} + \left(1 - \frac{4C}{3}\right) 2^{k+1},
+\end{align*}
+concluindo o passo indutivo e a demonstração.
+
+\newpage
+
+\textbf{(e). $\bm{T(n) := 9T(n/10) + Cn, \: \forall n \ge 2, \: S:= \{ 10^k : k \in \mathbb N \}}$}
+
+Vamos desenvolver a expressão dada, buscando uma fórmula não recursiva equivalente a ela.
+\begin{align*}
+    T(n) & = 9 \, \color{red} T(n/10) \color{black} + Cn \\
+    & = 9 \cdot \color{red} \Big( 9 \, T(n/10^2) + C(n/10) \Big) \color{black} + Cn \\
+    & = 9^2 \, \color{red} T(n/10^2) \color{black} + 9C(n/10) + Cn \\
+    & = 9^2 \cdot \color{red} \Big( 9 \, T(n/10^3) + C(n/10^2) \Big) \color{black} + 9C(n/10) + Cn \\
+    & = 9^3 \, T(n/10^3) + 9^2C(n/10^2) + 9C(n/10) + Cn \\
+    & \: \; \vdots \\
+    & = 9^k \, T(n/10^k) + Cn \cdot \sum_{i=0}^{k-1} \frac {9^i}{10^i}.
+\end{align*}
+Substituindo $T(1)=1$ e simplificando a soma geométrica:
+\begin{align*}
+    T(n) &= 9^k + Cn \sum_{i=0}^{k-1} \left(\frac{9}{10}\right)^i \\
+    &= 9^k + Cn \cdot \frac{1 - (9/10)^k}{1 - 9/10} \\
+    &= 9^k + 10Cn \left(1 - \left(\frac{9}{10}\right)^k \right).
+\end{align*}
+Como $n = 10^k$, temos $(9/10)^k = 9^k / 10^k = 9^k / n$, então:
+\begin{align*}
+    T(n) &= 9^k + 10Cn \left(1 - \frac{9^k}{n} \right) \\
+    &= 9^k + 10Cn - 10C \cdot 9^k \\
+    &= (1 - 10C) 9^k + 10Cn \\
+    &= (1 - 10C) n^{\log_{10} 9} + 10Cn.
+\end{align*}
+
+Agora, provamos que a fórmula é correta por indução sobre $k$, no conjunto $S$.
+
+Para $k=1$, $n=10$:
+\[ T(10) = 9T(1) + C \cdot 10 = 9\cdot 1 + 10C = 9 + 10C. \]
+Pela fórmula:
+\[ T(10) = (1 - 10C) \cdot 9 + 10C \cdot 10 = 9 - 90C + 100C = 9 + 10C. \]
+
+Agora, suponha que $T(10^k) = (1-10C) 9^k + 10C \cdot 10^k$.
+Para $T(10^{k+1})$, então:
+\begin{align*}
+T(10^{k+1}) &= 9T(10^k) + C \cdot 10^{k+1} \\
+&= 9 \big((1-10C) 9^k + 10C \cdot 10^k \big) + 10C \cdot 10^k \\
+&= (1-10C) 9^{k+1} + 90C \cdot 10^k + 10C \cdot 10^k - 90C \cdot 10^k? \\
+&= (1-10C) 9^{k+1} + 10C \cdot 10^{k+1},
+\end{align*}
+concluindo o passo indutivo e a demonstração.
+
+\newpage
+
+\section*{Exercício 2}
+
+O algoritmo abaixo funciona de maneira muito semelhante ao \textsc{Merge-Sort} original, com a sutil diferença de que nosso \textsc{Merge-Count} faz, além de intercalar e ordenar os sub-arrays, armazena a quantidade de inversões presentes entre eles incrementando uma variável sempre que uma inversão é encontrada.
+
+A entrada do algoritmo é o vetor $A$, uma cópia do vetor $X[1..n]$ recebido, com os parâmetros $A, 1, A$.length passados para a função recursiva \textsc{Count-Inversions}, e a saída é o número de inversões presentes em $A$.
+
+\textsc{Count-Inversions}$(A, p, r)$
+\begin{algorithmic}[1]
+\If{$p \geq r$}
+    \State \textbf{return} $0$
+\EndIf
+\State $q \gets \lfloor (p + r)/2 \rfloor$
+\State leftInv $\gets$ \textsc{Count-Inversions}$(A, p, q)$
+\State rightInv $\gets$ \textsc{Count-Inversions}$(A, q+1, r)$
+\State crossInv $\gets$ \textsc{Merge-Count}$(A, p, q, r)$
+\State \textbf{return} leftInv $+$ rightInv $+$ crossInv
+\end{algorithmic}
+
+\textsc{Merge-Count}$(A, p, q, r)$
+\begin{algorithmic}[1]
+\State $n_1 \gets q - p + 1$
+\State $n_2 \gets r - q$
+\State $L[1..n_1] \gets A[p..q]$
+\State $R[1..n_2] \gets A[q+1..r]$
+\State $i \gets 1$, $j \gets 1$, inv $\gets 0$
+\For{$k = p$ \textbf{to} $r$}
+    \If{$i \leq n_1$ \textbf{and} ($j > n_2$ \textbf{or} $L[i] \leq R[j]$)}
+        \State $A[k] \gets L[i]$
+        \State $i \gets i + 1$
+    \Else
+        \State $A[k] \gets R[j]$
+        \State inv $\gets$ inv $+ (n_1 - i + 1)$
+        \State $j \gets j + 1$
+    \EndIf
+\EndFor
+\State \textbf{return} inv
+\end{algorithmic}
+
+Vamos mostrar a corretude do algoritmo usando indução forte sobre o tamanho do vetor.
+
+Se o vetor tem um único elemento, o algoritmo retorna zero, o que é correto, já que um vetor de um elemento não tem inversões.
+
+Agora, suponha que o algoritmo funciona para qualquer vetor de tamanho menor que $n$, e então, considere um vetor de tamanho $n = r-p+1 > 1$. O algoritmo divide $A$ em dois, e realiza uma chamada recursiva em cada metade. Por hipótese, ele devolve o número correto de inversões em cada metade.
+
+Em seguida, o algoritmo faz a contagem de inversões cruzadas, isto é, inversões entre as duas metades. É importante lembrar que tais metades estão ordenadas, o que também faz parte da hipótese. Então, durante a intercalação dessas metades, cada vez que um elemento do sub-array da direita é menor que um elemento do sub-array da esquerda, significa que todos os elementos restantes na esquerda também são maiores que esse elemento da direita, assim, a variável \texttt{inv} é incrementada pelo número de elementos no sub-array da direita.
+
+Assim, como o algoritmo devolve o número de inversões cruzadas, somado ao número de inversões contidas nos sub-arrays, as quais, por hipótese, são corretas, concluímos sua corretude.
+
+\end{document}

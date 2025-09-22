@@ -1,0 +1,220 @@
+\documentclass[a4paper]{article}
+
+% language packages
+\usepackage[T1]{fontenc} % 8-bit font encoding (for correct diacritic display)
+\usepackage[utf8]{inputenc} % enables diacritics in source code
+\usepackage[brazil]{babel} % enables brazilian portuguese language standards
+
+% other packages
+\usepackage{amsmath,amssymb,amsfonts,amsthm} % math packages
+\usepackage{graphicx,xcolor} % for images and colors
+\usepackage{hyperref} % hyperlink in references
+\usepackage{fancyhdr} % for personalized headers
+\usepackage{bm} % bold in math mode
+
+% template do Marcel para mac0338
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyhead[L]{\Nome}
+% \fancyhead[R]{NUSP \NUSP}
+% \fancyfoot[L]{Lista \Lista}
+% \fancyfoot[C]{MAC0338}
+% \fancyfoot[R]{Página \thepage\ de \pageref{LastPage}}
+
+\setlength{\parindent}{0pt}	% no indentation
+\setlength{\parskip}{1em} % space b/w paragraphs
+
+\begin{document}
+
+\section*{Exercício 1}
+
+\textbf{(a). $\bm{3^n}$ não é $\text O \bm{(2^n)}$}
+
+Vamos supor que $3^n = \text O(2^n)$. Então existem $c, n_0$ tais que
+\[ 3^n \leq c \cdot 2^n, \quad \forall n \geq n_0. \]
+Dividindo ambos os lados por $2^n$, temos
+\[ \left(\frac{3}{2}\right)^n \leq c. \]
+Entretanto, $(3/2)^n \to \infty$ quando $n \to \infty$, logo, tal constante $c$ não pode existir: contradição. Logo, $3^n$ não é $\text O(2^n)$.
+
+\bigskip
+
+\textbf{(b). $\bm{\log_{10} n}$ é $\text O \bm{(2^n)}$}
+
+Usando a mudança de base de logaritmos:
+\[ \log_{10} n = \frac{\lg n}{\lg 10}. \]
+Assim, usando $c = \tfrac{1}{\lg 10}$ e $n_0 = 1$ temos que $\log_{10} n = c \cdot \lg n$. Em particular,
+\[ \log_{10} n \leq c \cdot \lg n. \]
+Logo, $\log_{10} n = O(\lg n)$.
+
+\bigskip
+
+\textbf{(c). $\bm{\lg n}$ é $\bm{\text O(\log_{10} n)}$}
+
+De modo análogo, pela mudança de base:
+\[ \lg n = \log_{10} n \cdot \lg 10. \]
+Assim, para todo $n \geq 1$, com $c = \lg 10$,
+\[ \lg n \leq c \cdot \log_{10} n. \]
+Logo, $\lg n = O(\log_{10} n)$.
+
+\newpage
+
+\section*{Exercício 2}
+
+\textbf{(a). $\bm{n^2 + 10n + 20 = \text O(n^2)}$}
+
+Para $n \ge 1$, $n^2 + 10n + 20 \le n^2 + 10n^2 + 20 n^2 = 31 n^2.$
+
+Escolhendo $c = 31, n_0 = 1$, temos
+\[ n^2 + 10n + 20 \le c \cdot n^2, \quad \forall n \ge n_0. \]
+Logo, existem $c, n_0$ tais que, $\forall n \geq n_0$, $n^2 + 10n + 20 \leq cn^2$, e concluímos que $n^2 + 10n + 20 \in \text O(n^2)$.
+
+\bigskip
+
+\textbf{(b). $\bm{\lceil n/3 \rceil \in \text O(n)}$}
+
+Para $n \ge 1$, $\lceil n/3 \rceil \le n/3 + 1 \le n/3 + n = \frac{4}{3} n.$
+
+Escolhendo $c = 4/3, n_0 = 1$, temos
+\[ \lceil n/3 \rceil \le c \cdot n, \quad \forall n \ge n_0. \]
+Logo, existem $c, n_0$ tais que, $\forall n \geq n_0$, $\lceil n/3 \rceil \leq cn$, e concluímos que $n^2 + 10n + 20 \in \text O(n)$.
+
+\bigskip
+
+\textbf{(c). $\bm{\lg n = \text O(\log_{10} n)}$}
+
+Pela mudança de base de logaritmos, temos $\lg n = (\lg 10) \cdot \log_{10} n$.
+
+Escolhendo $c = \lg 10, \quad n_0 = 1$, temos
+\[ \lg n \le c \cdot \log_{10} n, \quad \forall n \ge n_0. \]
+Logo, existem $c, n_0$ tais que $\forall n \geq n_0$, $\lg n \leq c \cdot \log_{10} n$, e concluímos que $\lg n \in \text O(\log_{10} n)$.
+
+\bigskip
+
+\textbf{(d). $\bm{n = \text O(2^n)}$}
+
+Vamos provar, por indução finita sobre $n$, que $n \le 2^n$, para todo inteiro positivo:
+
+Para $n=1$, temos $1 \leq 2$. Agora, $n \le 2^n$ implica $n+1 \le 2^n + 1 \le 2^n + 2^n = 2^{n+1}$, e concluímos o passo indutivo.
+
+Com isso, escolhendo $c = 1, \quad n_0 = 1$, temos
+\[ n \le c \cdot 2^n, \quad \forall n \ge n_0. \]
+Logo, existem $c, n_0$ tais que $\forall n \geq n_0$, $n \le c \cdot 2^n$.
+
+\bigskip
+
+\textbf{(e). $\bm{n/1000}$ não é $\bm{\text O(1)}$}
+
+Vamos supor que $n/1000 = O(1)$. Então existem $c>0$ e $n_0 \ge 1$ tais que
+\[ n/1000 \le c, \quad \forall n \ge n_0. \]
+Mas $n/1000 \to \infty$ quando $n \to \infty$, logo, tal constante $c$ não existe: contradição. Logo, $n/1000$ não é $O(1)$.
+
+\bigskip
+
+\textbf{(f). $\bm{n^2/2}$ não é $\text O \bm{(n)}$}
+
+Vamos supor que $n^2/2 = \text O(n)$. Então existem $c>0$ e $n_0 \ge 1$ tais que
+\[ n^2/2 \le c n, \quad \forall n \ge n_0. \]
+
+Dividindo por $n > 0$, vem
+\[ n/2 \le c \implies n \le 2c, \]
+o que não é verdade para $n \to \infty$: contradição. Logo, $n^2/2$ não é $\text O(n)$.
+
+\newpage
+
+\section*{Exercício 3}
+
+\textbf{(a) $\bm{\lg\sqrt{n} = \text O(\lg n)}$}
+
+Recordemos das propriedades dos logaritmos: $\lg\sqrt{n}=\lg\big(n^{1/2}\big)=\tfrac{1}{2}\lg n.$
+
+Logo, escolhendo $c= \frac 12, n_0$ qualquer, temos: $\lg\sqrt{n} = c\cdot \lg n$. Em particular,
+\[ \lg \sqrt n \le c \cdot \lg n. \]
+Logo, $\lg\sqrt{n} \in \text O(\lg n)$
+
+\bigskip
+
+\textbf{(b) Se $f=\Theta(g)$ e $g=\Theta(h)$ então $f=\Theta(h)$}
+
+Pelas hipóteses $\exists$ $(a,b,c,d,n_1,n_2)$ tais que
+\[ a\,g(n)\le f(n)\le b\,g(n), \quad \forall n \ge n_1, \]
+e
+\[ c\,h(n)\le g(n)\le d\,h(n), \quad \forall n \ge n_2. \]
+Tomando \(n_0=\max\{n_1,n_2\}\) e compondo as desigualdades, para todo \(n\ge n_0\) temos
+\[ ac\,h(n) \le a\,g(n) \le f(n) \le b\,g(n) \le bd\,h(n). \]
+Assim \(f(n) \in \Theta(h(n))\) com constantes \(ac\) e \(bd\), e a afirmação é verdadeira.
+
+\bigskip
+
+\textbf{(c) Se $\bf{f=\text O(g)}$ e $\bm{g=\Theta(h)}$ então $\bm{f=\Theta(h)}$}
+
+Considere as funções:
+\[ f(n)=1,\qquad g(n)=n,\qquad h(n)=n. \]
+Então, $g(n)=\Theta(h(n))=\Theta(n)$, por óbvio, e $f(n)=\text O(g(n))=\text O(n)$.
+
+No entanto $f(n)$ não é $\Omega(h(n)) = \Omega(n)$: não existe $c>0$ tal que $1 \ge c\,n$. Logo $f \in \Theta(h)$, e a afirmação é falsa.
+
+\bigskip
+
+\textbf{(d) Se $\bm{\lg(g(n))>0}$ e $\bm{f(n)\ge 1}$ para $\bm n$ suficientemente grande, então $\bm{f=\text O(g) \implies \lg(f) = \text O(\lg(g))}$.
+}
+
+Ora, se $\exists \, n_0, \, c : \forall n \ge n_0$, $1 \le f(n)\le c\,g(n)$, então, para \(n\ge n_0\), vale
+\[ 0 \le \lg(f(n)) \le \lg\big(c\,g(n)\big)=\lg c + \lg(g(n)). \]
+Daí, podemos fazer:
+\[ \lg(f(n)) = \lg c + \lg(g(n)) = \lg (g(n)) \cdot \Big( 1 + \frac{\lg c}{\lg (g(n))} \Big). \]
+Agora, vamos olhar para $\dfrac{\lg c}{\lg(g(n))}$. Sabemos que $\lg(g(n)) \ge \delta > 0$. Vamos chamar de $\delta_{\text{min}}$ o menor valor de $\lg(g(n))$. Daí, temos:
+\[ \lg(f(n)) \le \Big( 1 + \frac{\lg c}{\lg(g(n))}\Big) \cdot \lg(g(n))) \le K \cdot \lg(g(n)). \]
+Onde, se $\lg c < 0$, tomamos $K=1$, e do contrário, tomamos $K=1+\dfrac{\lg c}{\delta_{\text{min}}}$. Assim, concluímos que $\lg(f(n)) \in \text O(\lg(g(n)))$
+
+\bigskip
+
+\textbf{(e) $\bm{2^{f(n)}=\text O(2^{g(n)})}$}
+
+Sejam
+\[ f(n)=2\,g(n), \qquad g(n)=n. \]
+Então $f(n)=\text O(g(n))$, por óbvio. Contudo,
+\[ 2^{f(n)}=2^{2n}=(2^{n})^2= \big(2^{g(n)}\big)^2. \]
+Se existissem constantes positivas $c, \, n_0$ tais que $2^{2n} \le c \cdot 2^{n}$ para todo $n\ge n_0$, então, dividindo por $2^n$, obteríamos $2^n\le c$ para todo $n\ge n_0$, o que é impossível, uma vez que $2^n \to \infty$ quando $n \to \infty$. Logo $2^{f(n)} \not \in \text O(2^{g(n)})$.
+
+\bigskip
+
+\newpage
+
+\section*{Exercício 4}
+
+\textbf{(a). $\bm{\sum_{k=1}^{n} k^{10}}$ é $\bm{\Theta(n^{11})}$}
+
+Devemos apresentar inteiros positivos \(n_0, c_1,c_2\) tais que, para todo \(n\ge n_0\),
+\[ c_1 \, n^{11} \le \sum_{k=1}^n k^{10} \le c_2 \, n^{11}. \]
+Considere a função \(f(x)=x^{10}\), crescente para $x>0$. A ideia aqui é obter uma aproximação por excesso para o gráfico dessa função. Note que $\sum_{k=1}^n k^{10}$ corresponde a soma da área de 10 retângulos (de largura 1 e de altura $x^{10}$), e cada retângulo excede a área da função sob o respectivo intervalo de $x$.
+
+Sendo assim, podemos concluir, usando o Teorema Fundamental do Cálculo para obter a área da função, que:
+\[ \sum_{k=1}^n k^{10} \ge \int_{0}^{n} x^{10}\,dx = \left[\frac{x^{11}}{11}\right]_{0}^{n} = \frac{n^{11}}{11}. \]
+E assim, podemos tomar o limite inferior \(c_1=\frac{1}{11}\).
+
+Agora, como $\forall k, \, k \le n$, temos:
+\[ \sum_{k=1}^n k^{10} \le \sum_{k=1}^n n^{10} = n\cdot n^{10}=n^{11}. \]
+Logo podemos tomar o limite superior \(c_2=1\).
+
+Como ambas as desigualdades valem $\forall n \ge 1$, mostramos que existem constantes positivas \(c_1=\frac{1}{11}\), \(c_2=1\) e \(n_0=1\) que satisfazem a definição de \(\Theta\), e concluímos:
+\[ \sum_{k=1}^n k^{10} \in \Theta(n^{11}). \]
+
+\bigskip
+
+\textbf{(b). $\bm{\sum_{k=1}^n \frac{k}{2^k} \le 2}$}
+
+Seja
+\[ S_{n}=\sum _{k=1}^{n}\frac{k}{2^{k}}=\frac{1}{2^{1}}+\frac{2}{2^{2}}+\frac{3}{2^{3}}+\dots +\frac{n}{2^{n}}. \]
+Multipliquemos os dois membros por 2, temos então:
+\[ 2S_{n}=\sum _{k=1}^{n}\frac{k}{2^{k}}=\frac 11+\frac 22+\frac 34+\dots +\frac{n}{2^{n-1}}. \]
+Agora, vamos subtrair $S_n$ de $2S_n$:
+\[ 2S_{n}-S_{n}=\left(1+\frac{2}{2}+\frac{3}{4}+\dots +\frac{n}{2^{n-1}}\right)-\left(\frac{1}{2}+\frac{2}{4}+\dots +\frac{n-1}{2^{n-1}}+\frac{n}{2^{n}}\right), \]
+e alinhar os termos com mesmo denominador:
+\[ S_{n}=1+\left(\frac{2}{2}-\frac{1}{2}\right)+\left(\frac{3}{4}-\frac{2}{4}\right)+\dots +\left(\frac{n}{2^{n-1}}-\frac{n-1}{2^{n-1}}\right)-\frac{n}{2^{n}}. \]
+Com isso, simplificamos a expressão para uma progressão geométrica:
+\[ S_{n}=1+\frac{1}{2}+\frac{1}{4}+\dots +\frac{1}{2^{n-1}}-\frac{n}{2^{n}}, \]
+cuja expressão para a soma conhecemos:
+\[ \frac{1 \cdot (1-(1/2)^{n})}{1-1/2}=2 \cdot (1-\frac{1}{2^{n}})=2-\frac{1}{2^{n-1}}.\]
+Assim, sendo $n$ positivo, concluímos: $S_n = 2 - \dfrac 1{2^{n-1}} \le 2$.
+
+\end{document}
